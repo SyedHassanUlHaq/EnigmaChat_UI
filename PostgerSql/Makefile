@@ -1,5 +1,0 @@
-DB_HOST=localhost
-DB_NAME=EnigmaChat
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_PORT=5432

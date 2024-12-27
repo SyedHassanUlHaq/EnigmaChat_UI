@@ -18,7 +18,7 @@
 
             <!-- Right side with the login form -->
             <div class="form-container">
-                <form class="Login-form" action="/login" method="POST" onsubmit="return validateForm()">
+                <form class="Login-form" action="/login" method="POST" onsubmit="return validateForm()" id="Login-form">
                     <h2>Login</h2>
                     
                     <label for="email">Email/Phone</label>
@@ -39,7 +39,7 @@
 
                     <!-- Register link -->
                     <div class="Login-link">
-                        <span>Not Registered? <a href="index.html">Register</a></span>
+                        <span>Not Registered? <a href="register.html">Register</a></span>
                     </div>
                 </form>
             </div>
@@ -47,15 +47,6 @@
     </div>
     <footer>© Quantum-Safe By ML-KEM</footer>
 
-    <script>
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            input.type = input.type === "password" ? "text" : "password";
-        }
-        function validateForm() {
-            // Add form validation logic if needed
-            return true;
-        }
-    </script>
+    <script src="js/login.js"></script>
 </body>
 </html>

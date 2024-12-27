@@ -1,10 +1,12 @@
 import logging, os, webview
 
 from globals import enigma_UI_LOGS, loglevel, windows, debug
-from frontend.exposed_functs import expose
+from frontend.exposed_functs import bind_expose_methods
 
 
 if __name__ == '__main__':
+    if not os.path.exists("logs"):
+        os.makedirs("logs")
     logging.basicConfig(
         filename=os.path.join(enigma_UI_LOGS, 'enigma_UI.log'),
         filemode='w',
@@ -20,4 +22,4 @@ if __name__ == '__main__':
         resizable=False,
     )
     logging.info('Enigma UI started')
-    webview.start(expose, [windows['main']], debug=debug)
+    webview.start(bind_expose_methods, [windows['main']], debug=debug)

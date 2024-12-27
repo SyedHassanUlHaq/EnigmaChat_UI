@@ -1,8 +1,9 @@
-27 Dec 2024 21:10:24 INFO     main.py Enigma UI started
-27 Dec 2024 21:10:24 ERROR    guilib.py GTK cannot be loaded
+28 Dec 2024 04:31:45 INFO     main.py Enigma UI started
+28 Dec 2024 04:31:45 ERROR    guilib.py GTK cannot be loaded
 Traceback (most recent call last):
   File "/home/syed-hassan-ul-haq/repos/EnigmaChat_UI/enigma_UI/lib/python3.12/site-packages/webview/guilib.py", line 37, in import_gtk
     import webview.platforms.gtk as guilib
   File "/home/syed-hassan-ul-haq/repos/EnigmaChat_UI/enigma_UI/lib/python3.12/site-packages/webview/platforms/gtk.py", line 20, in <module>
     import gi
 ModuleNotFoundError: No module named 'gi'
+28 Dec 2024 04:32:03 INFO     expose.py User hassan@gmail.com authenticated successfully.
