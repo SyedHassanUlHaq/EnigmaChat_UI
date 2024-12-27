@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <script>
-        // Function to validate passwords and redirect to login page
+        // Function to validate passwords
         function validatePasswords() {
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
@@ -19,9 +19,34 @@
                 return false; // Prevent form submission
             }
 
-            // Redirect to login page
-            window.location.href = "login.html";
-            return false; // Prevent default form submission to avoid page reload
+            return true; // Allow form submission
+        }
+
+        // Function to toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === "password" ? "text" : "password";
+        }
+
+        // Function to show profile picture preview
+        function previewProfilePicture(event) {
+            const preview = document.getElementById("profile-picture-preview");
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = "block"; // Show preview
+            };
+
+            if (file) {
+                reader.readAsDataURL(file); // Read the file as a data URL
+            }
+        }
+
+        // Show popup message after successful registration
+        function showPopupMessage() {
+            alert("Registration successful!");
         }
     </script>
 </head>
@@ -33,10 +58,12 @@
                 <h1>Enigma Chat</h1>
             </div>
             <div class="form-container">
-                <form class="register-form" onsubmit="return validatePasswords()">
+                <form class="register-form" action="/register" method="POST" enctype="multipart/form-data" 
+                    onsubmit="return validatePasswords()">
                     <h2>Register</h2>
+                    
                     <label for="fullname">Full Name</label>
-                    <input type="text" id="fullname" name="fullname" placeholder="Enter your fullname" required>
+                    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
                     
                     <label for="email">Email/Phone</label>
                     <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -56,8 +83,14 @@
                     <!-- Error message container -->
                     <div id="password-error" style="color: red; display: none; font-size: 14px; margin-top: 5px;"></div>
                     
-                    <button type="submit" class="register-btn">Register</button>
-
+                    <label for="profile-picture">Profile Picture</label>
+                    <input type="file" id="profile-picture" name="profile_picture" accept="image/*" onchange="previewProfilePicture(event)" required>
+                    
+                    <!-- Preview of uploaded profile picture -->
+                    <img id="profile-picture-preview" src="" alt="Profile Picture Preview" style="display: none; margin-top: 10px; width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                    
+                    <button type="submit" class="register-btn" onclick="showPopupMessage()">Register</button>
+                    
                     <!-- Login link -->
                     <div class="login-link">
                         <span>Already have an account? <a href="login.html">Login</a></span>

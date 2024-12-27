@@ -5,116 +5,116 @@ body {
     color: #fff;
     display: flex;
     height: 100vh;
-  }
-  
-  .chat-container {
+}
+
+.chat-container {
     display: flex;
     width: 100%;
-  }
-  
-  .sidebar {
+}
+
+.sidebar {
     width: 25%;
     background-color: #121212;
     padding: 10px;
     display: flex;
     flex-direction: column;
-  }
-  
-  .logo {
+}
+
+.logo {
     font-size: 24px;
     font-weight: bold;
     text-align: center;
     color: #0f0;
-  }
-  
-  .search input {
+}
+
+.search input {
     width: 90%;
     padding: 10px;
     margin: 10px auto;
     border: none;
     border-radius: 5px;
-  }
-  
-  .user-list {
+}
+
+.user-list {
     flex: 1;
     overflow-y: auto;
-  }
-  
-  .user-entry {
+}
+
+.user-entry {
     display: flex;
     align-items: center;
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
-  }
-  
-  .user-entry:hover {
+}
+
+.user-entry:hover {
     background-color: #333;
-  }
-  
-  .user-entry img {
+}
+
+.user-entry img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
-  }
-  
-  .chat-window {
+}
+
+.chat-window {
     flex: 1;
     display: flex;
     flex-direction: column;
     background: #202020;
-  }
-  
-  .chat-header {
+}
+
+.chat-header {
     display: flex;
     align-items: center;
     padding: 10px;
     background: #333;
-  }
-  
-  .profile-pic img {
+}
+
+.profile-pic img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-  }
-  
-  .user-info {
+}
+
+.user-info {
     margin-left: 10px;
-  }
-  
-  .chat-messages {
+}
+
+.chat-messages {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
-  }
-  
-  .message {
+}
+
+.message {
     margin: 10px 0;
-  }
-  
-  .message.sent {
+}
+
+.message.sent {
     text-align: right;
-  }
-  
-  .message.received {
+}
+
+.message.received {
     text-align: left;
-  }
-  
-  .message-input {
+}
+
+.message-input {
     display: flex;
     padding: 10px;
     background: #333;
-  }
-  
-  .message-input input {
+}
+
+.message-input input {
     flex: 1;
     padding: 10px;
     border: none;
     border-radius: 5px;
-  }
-  
-  .message-input button {
+}
+
+.message-input button {
     margin-left: 10px;
     padding: 10px 20px;
     border: none;
@@ -122,5 +122,4 @@ body {
     color: #000;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
+}
