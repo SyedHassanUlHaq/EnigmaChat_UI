@@ -10,14 +10,15 @@
 <body>
     <div class="main-container">
         <div class="square-container">
-                <div class="logo-container">
-                    <img src="logo.png" alt="Logo">
-                    <h2>Enigma Chat</h2>
-                </div>
-            
+            <!-- Left side with the logo -->
+            <div class="logo-container">
+                <img src="logo.png" alt="Logo">
+                <h2>Enigma Chat</h2>
+            </div>
+
             <!-- Right side with the login form -->
             <div class="form-container">
-                <form class="Login-form" onsubmit="return validateForm()">
+                <form class="Login-form" action="/login" method="POST" onsubmit="return validateForm()">
                     <h2>Login</h2>
                     
                     <label for="email">Email/Phone</label>
@@ -36,17 +37,25 @@
                     
                     <button type="submit" class="Login-btn">Login</button>
 
-                    <!-- Login link -->
+                    <!-- Register link -->
                     <div class="Login-link">
                         <span>Not Registered? <a href="index.html">Register</a></span>
                     </div>
-                    
                 </form>
             </div>
-            
         </div>
-        
     </div>
-      <footer>© Quantum-Safe By ML-KEM</footer>
+    <footer>© Quantum-Safe By ML-KEM</footer>
+
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === "password" ? "text" : "password";
+        }
+        function validateForm() {
+            // Add form validation logic if needed
+            return true;
+        }
+    </script>
 </body>
 </html>

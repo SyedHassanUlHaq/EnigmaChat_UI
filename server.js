@@ -4,14 +4,14 @@ const multer = require('multer');
 const { Pool } = require('pg');
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 // Database configuration
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
   database: 'EnigmaChat', // Replace with your database name
-  password: 'owaiskuttapru5', // Replace with your database password
+  password: 'owais1234', // Replace with your database password
   port: 5432,
 });
 
@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 // File upload configuration
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Serve static files (HTML, CSS)
+// Serve static files (HTML, CSS, JS)
 app.use(express.static(__dirname));
 
 // Handle registration
@@ -41,7 +41,7 @@ app.post('/register', upload.single('profile_picture'), async (req, res) => {
     // Redirect to login page
     res.redirect('/login.html');
   } catch (error) {
-    console.error(error);
+    console.error('Error during registration:', error.message);
     res.status(500).send('An error occurred during registration.');
   }
 });
@@ -51,7 +51,6 @@ app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Query to check for matching email/phone and password
     const query = `
       SELECT * 
       FROM public."Registeration"
@@ -61,10 +60,8 @@ app.post('/login', async (req, res) => {
     const result = await pool.query(query, [email, password]);
 
     if (result.rows.length > 0) {
-      // Successful login, redirect to Main.html
-      res.redirect('/Main.html');
+      res.redirect('/Main.html'); // Redirects to the main page
     } else {
-      // Invalid credentials, show error message
       res.send(`
         <script>
           alert("Incorrect email or password.");
@@ -73,7 +70,7 @@ app.post('/login', async (req, res) => {
       `);
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error during login:', error.message);
     res.status(500).send('An error occurred during login.');
   }
 });

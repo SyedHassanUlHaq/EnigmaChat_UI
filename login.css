@@ -1,3 +1,4 @@
+/* General Reset */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -5,6 +6,7 @@
     font-family: Arial, sans-serif;
 }
 
+/* Body Styling */
 body {
     background-color: #1a1a1a;
     display: flex;
@@ -15,6 +17,7 @@ body {
     color: #ffffff;
 }
 
+/* Main Container */
 .main-container {
     display: flex;
     justify-content: center;
@@ -22,87 +25,82 @@ body {
     flex-direction: column;
 }
 
+/* Square Container */
 .square-container {
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
     align-items: center;
-    background-color:#000000; 
+    background-color: #000000;
     padding: 20px;
     border-radius: 10px;
-    width: 700px; 
+    width: 700px;
     height: 500px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    text-align: center;
     margin-bottom: 20px;
 }
 
+/* Logo Container */
 .logo-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-end; 
-    justify-content: center;
-    padding-right: 20px;
-    display: flex;
-    justify-content: flex-end; 
     align-items: center;
-    width: 50%; 
+    justify-content: center;
+    width: 50%;
 }
+
 .logo-container img {
     width: 130px;
     height: auto;
-    margin-bottom: 80px; /* Adds space below the logo */
+    margin-bottom: 20px;
 }
 
 .logo-container h2 {
     font-size: 30px;
     color: #ffffff;
-    font-family: 'Open Sans', sans-serif; /* Apply Open Sans */
 }
 
-
+/* Form Container */
 .form-container {
-    width: 60%; 
-    height: 100;
+    width: 50%;
     display: flex;
     justify-content: center;
-    right: 40px;
 }
 
+/* Login Form */
 .Login-form {
-    background-image: url('image 1.png'); 
-    background-size: contain; 
-    background-position: center; 
-    background-repeat: no-repeat; 
-    background-color: rgba(0, 0, 0, 0.8); /* Black overlay with 80% opacity */
-    padding: 40px; /* Increased padding for more internal space */
+    background-image: url('image 1.png'); /* Keep the same background image */
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 40px;
     border-radius: 8px;
     color: #ffffff;
-    width: 400%; /* Increase width */
-    max-width: 600px; /* Allow larger form size */
-    background-size: 100% 100%; 
+    width: 100%;
+    max-width: 400px;
 }
-
 
 .Login-form h2 {
     color: #ffffff;
-    margin-bottom: 70px;
+    margin-bottom: 30px;
     font-family: 'Open Sans', sans-serif;
 }
+
 .Login-form label {
     color: #ffffff;
     font-size: 14px;
     margin-top: 20px;
     display: block;
     text-align: left;
-    
 }
+
 .Login-form input[type="email"],
 .Login-form input[type="password"] {
-    width: 300px;
+    width: 100%;
     padding: 10px;
     margin-top: 7px;
     border: 3px solid #333333;
-    border-radius: 9px;
+    border-radius: 5px;
     background-color: rgba(34, 34, 34, 0.8);
     color: #ffffff;
 }
@@ -111,6 +109,7 @@ body {
     display: flex;
     align-items: center;
     position: relative;
+    margin-top: 10px;
 }
 
 .password-container input {
@@ -130,24 +129,25 @@ body {
 .Login-btn {
     width: 100%;
     padding: 10px;
-    background-color: #28a745;
+    background-color: #036825;
     border: none;
     border-radius: 5px;
     color: #ffffff;
     font-size: 16px;
     cursor: pointer;
-    background-color: #036825;
-    outline: 3px solid #00FF38;
     margin-top: 20px;
+    transition: background-color 0.3s ease;
 }
 
+.Login-btn:hover {
+    background-color: #028a39;
+}
 
-
+/* Forgot Password */
 .forgot-password {
     text-align: right;
     font-size: 14px;
-    margin-bottom: 10px;
-    padding: 10px;
+    margin-top: 10px;
 }
 
 .forgot-password a {
@@ -155,9 +155,10 @@ body {
     text-decoration: none;
 }
 
+/* Register Link */
 .Login-link {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 20px;
     font-size: 14px;
 }
 
@@ -166,15 +167,11 @@ body {
     text-decoration: none;
 }
 
+/* Footer */
 footer {
-    width: 100%;
-    max-width: 600px;
-    text-align: left;
+    text-align: center;
     font-size: 14px;
     color: #999999;
-    background-color: #000000;
-    border-radius: 0 0 10px 10px;
-    margin-top: -40px;
-    position: relative;
+    margin-top: 20px;
     font-weight: bold;
 }

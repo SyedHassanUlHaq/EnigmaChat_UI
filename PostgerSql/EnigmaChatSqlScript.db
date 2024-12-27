@@ -1,0 +1,19 @@
+-- Table: public.Registeration
+
+-- DROP TABLE IF EXISTS public."Registeration";
+
+CREATE TABLE IF NOT EXISTS public."Registeration"
+(
+    id integer NOT NULL DEFAULT nextval('"Registeration_id_seq"'::regclass),
+    full_name character varying COLLATE pg_catalog."default" NOT NULL,
+    email_or_phone character varying COLLATE pg_catalog."default" NOT NULL,
+    password character varying COLLATE pg_catalog."default" NOT NULL,
+    profile_picture bytea,
+    created_at timestamp with time zone,
+    CONSTRAINT "Registeration_pkey" PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."Registeration"
+    OWNER to postgres;

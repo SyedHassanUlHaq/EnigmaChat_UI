@@ -385,5 +385,17 @@
       }
   }
 </script> -->
+<script>
+    function toggleDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Add event listener to the Logout link
+    document.querySelector('#userDropdown a[href="login.html"]').addEventListener('click', function () {
+        window.location.href = 'login.html'; // Redirect to login.html
+    });
+</script>
+                                                                
 </body>
 </html>
