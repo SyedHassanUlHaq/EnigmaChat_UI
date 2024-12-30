@@ -6,48 +6,77 @@ function toggleDropdown(id) {
 
 // Function to handle opening a user's chat dynamically
 function openChat(userElement) {
-    // Extract data from the clicked user element
     const userId = userElement.getAttribute('data-user-id');
     const userName = userElement.getAttribute('data-user-name');
     const userAvatar = userElement.getAttribute('data-user-avatar');
 
-    // Update the chat header with the selected user's name and avatar
-    const chatHeader = document.querySelector('.chat-header');
-    const chatBody = document.querySelector('.chat-body');
-    
-    chatHeader.querySelector('h5').textContent = userName;
-    chatHeader.querySelector('img').src = userAvatar;
-    
-    // Optionally, clear the previous chat messages in the chat body
-    chatBody.innerHTML = ''; // Clear existing messages
+    // Update chat header with selected user details
+    document.querySelector('#chatName').textContent = userName;
+    document.querySelector('#chatAvatar').src = userAvatar;
 
-    // Add the placeholder messages or load messages specific to this user
+    // Clear chat body
+    const chatBody = document.querySelector('#chatMessages');
+    chatBody.innerHTML = '';
+
+    // Placeholder messages (replace with API call for real messages)
     const messages = [
-        { text: 'Lorem ipsum is typically a corrupted version of De finibus bonorum et malorum.', type: 'received' },
-        { text: 'Lorem ipsum is typically a corrupted version of De finibus bonorum et malorum.', type: 'sent' }
+        { text: 'Hello, how are you?', type: 'received' },
+        { text: 'I am fine, thank you!', type: 'sent' }
     ];
 
-    // Append messages dynamically based on the user
-    messages.forEach(message => {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', message.type);
-        messageDiv.innerHTML = `${message.text} <div class="label">${message.type === 'sent' ? 'Message sent' : 'Message received'}</div><div class="encrypted">\xb7\xcb\xc8\x03*\xaa\xb0</div>`;
-        chatBody.appendChild(messageDiv);
+    // Dynamically add messages
+    messages.forEach(msg => {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', msg.type);
+        msgDiv.textContent = msg.text;
+        chatBody.appendChild(msgDiv);
     });
 }
 
-// Event listener for when the user clicks on a user in the sidebar
-document.querySelectorAll('.sidebar .user').forEach(user => {
-    user.addEventListener('click', () => {
-        openChat(user); // Pass the clicked user element to openChat function
-    });
-});
+// Function to fetch users and populate the sidebar
+function loadUsers() {
+    window.pywebview.api.get_users().then(users => {
+        const usersContainer = document.querySelector('.users-list');
+        usersContainer.innerHTML = '';
 
-// Close the dropdown when clicking outside
-window.onclick = function(event) {
-    if (!event.target.closest('.logged-in-user') && !event.target.closest('.user')) {
+        users.forEach(user => {
+            const userElement = document.createElement('div');
+            userElement.classList.add('user');
+            userElement.setAttribute('data-user-id', user.id);
+            userElement.setAttribute('data-user-name', user.fullname);
+            userElement.setAttribute('data-user-avatar', `uploads/profile_pictures/${user.profile_picture}`);
+
+            userElement.innerHTML = `
+                <img src="uploads/profile_pictures/${user.profile_picture}" alt="${user.fullname}">
+                <span>${user.fullname}</span>
+            `;
+
+            userElement.addEventListener('click', () => openChat(userElement));
+            usersContainer.appendChild(userElement);
+        });
+    }).catch(error => {
+        console.error('Error fetching users:', error);
+    });
+}
+
+// Close dropdown when clicking outside
+window.onclick = function (event) {
+    if (!event.target.closest('.logged-in-user')) {
         document.querySelectorAll('.dropdown-content').forEach(dropdown => {
             dropdown.style.display = 'none';
         });
     }
-}
+};
+
+// Handle logout functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutLink = document.querySelector('#logoutLink');
+    logoutLink.addEventListener('click', () => {
+        // Perform logout logic
+        // Redirect to login page
+        window.location.href = 'frontend/web/login.html';
+    });
+
+    // Load users on page load
+    // loadUsers();
+});
