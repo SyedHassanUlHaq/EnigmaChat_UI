@@ -14,7 +14,7 @@ port = int(os.getenv("DB_PORT", 5432))
 
 # Paths
 HOME = os.environ['HOME']
-debug = False
+debug = True
 loglevel = logging.DEBUG if debug else logging.INFO
 windows = {}
 configs = {}
