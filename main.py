@@ -16,7 +16,7 @@ if __name__ == '__main__':
     )
     windows['main'] = webview.create_window(
         title='Enigma UI',
-        url='frontend/web/main.html',
+        url='frontend/web/login.html',
         width=1200,
         height=600,
         resizable=False,
