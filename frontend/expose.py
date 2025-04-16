@@ -3,6 +3,16 @@ import uuid
 import logging
 from frontend.database import Database
 import base64 
+from kyber_py.src.kyber_py.ml_kem.ml_kem import ML_KEM
+
+params = {
+    "k": 3,
+    "eta_1": 3,
+    "eta_2": 2,
+    "du": 10,
+    "dv": 4,
+}
+kem = ML_KEM(params)
 
 class Exposed:
     def __init__(self):
@@ -34,13 +44,14 @@ class Exposed:
 
             with open(picture_path, "wb") as f:
                 f.write(profile_picture_data)
-
             # Insert user into the database
+            
+            ek, dk = kem.keygen()
             query = """
-            INSERT INTO users (fullname, email, password, profile_picture)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO users (fullname, email, password, profile_picture, ek)
+            VALUES (%s, %s, %s, %s, %s)
             """
-            self.db.execute_update(query, (fullname, email, password, picture_name))
+            self.db.execute_update(query, (fullname, email, password, picture_name, ek))
             logging.info(f"User {email} registered successfully.")
             return {"status": "success", "message": "Registration successful"}
         except Exception as e:

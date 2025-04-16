@@ -17,7 +17,7 @@ class Database:
         except Exception as e:
             logging.error(f"Error connecting to database: {e}")
             raise
-
+              
     def execute_query(self, query, params=None):
         try:
             with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
