@@ -46,7 +46,9 @@ document.querySelector(".register-form").addEventListener("submit", async (event
     const fullname = document.getElementById("fullname").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const profilePicture = document.getElementById("profile-picture").files[0];
+    const profilePictureInput = document.getElementById("profile-picture");
+    const profilePictureFile = profilePictureInput.files[0]; // Get the file object
+    const profilePicturePath = profilePictureFile?.path || ""; // Get the file path if available
 
     // Validate passwords
     if (!validatePasswords()) {
@@ -54,28 +56,20 @@ document.querySelector(".register-form").addEventListener("submit", async (event
     }
 
     try {
-        // Read the profile picture as binary data
-        const reader = new FileReader();
-        reader.onload = async function () {
-            const profilePictureData = reader.result.split(",")[1]; // Get the Base64 data
+        // Call the backend via pywebview API with the file path
+        const result = await pywebview.api.register_user(
+            fullname,
+            email,
+            password,
+            profilePicturePath // Send the file path to the backend
+        );
 
-            // Call the backend via pywebview API
-            const result = await pywebview.api.register_user(
-                fullname, 
-                email, 
-                password, 
-                atob(profilePictureData) // Decode Base64 to binary
-            );
-
-            if (result.status === "success") {
-                alert(result.message); // Show success message
-                window.location.href = "login.html"; // Redirect to login page
-            } else {
-                alert(result.message); // Show error message
-            }
-        };
-
-        reader.readAsDataURL(profilePicture); // Read the file as Base64
+        if (result.status === "success") {
+            alert(result.message); // Show success message
+            window.location.href = "login.html"; // Redirect to login page
+        } else {
+            alert(result.message); // Show error message
+        }
     } catch (error) {
         console.error("Error during registration:", error);
         alert("An error occurred. Please try again.");

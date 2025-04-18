@@ -91,7 +91,7 @@ content: "";
 position: absolute;
 right: 0px; /* Adjusts the distance from the right edge */
 width: 30px; /* Width of the green box */
-height: 75px; /* Height of the green box */
+height: 50px; /* Height of the green box */
 background-color: #99FFAF; /* Green color */
 border-radius: 0px 10px 10px 0px; /* Optional: Rounding for the box */
 background-image: url('arrow.png'); /* Replace with the actual path */
@@ -258,4 +258,15 @@ margin-right: 20px;
     color: #fff;
     background-color: #5E5D5D;
     height: 40px;
+}
+.chat-target-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 0px 10px 10px 0px;
+    border: 2px solid #202020; /* Green border around the entire header */
+    border-left: 5px solid #202020;
+    color: #fff;
+    background-color: #000000; /* Background color of chat header */
+    position: relative;
 }

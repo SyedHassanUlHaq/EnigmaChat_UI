@@ -6,110 +6,65 @@
     <title>EnigmaChat - ML-KEM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
-    <div class="chat-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <!-- Logged-in User -->
-            <button class="logged-in-user" onclick="toggleDropdown('userDropdown')">
-              <img src="images/user2.jpg" alt="Logged-in User">
-          
-              <div id="userDropdown" class="dropdown-content">
-                  <a href="#"><i class="fas fa-cog"></i> Settings</a>
-                  <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                         </div>
-                <div class="logo-area">
-                  <img src="images/logo-trans.png" alt="Logo">
-                  
-              </div>
-            </button>
-            <!-- Logo Area -->
-           
-            <!-- Other Users -->
-             <br>
-             <br>
-             <div class="user" data-user-id="1" data-user-name="Syed Hassan ul Haq" data-user-avatar="user1.jpg">
-              <img src="images/user1.jpg" alt="User" >
-              <span>Syed Hassan ul Haq</span>
-          </div>
-            <div class="user">
-                <img src="images/user2.jpg" alt="User">
-                <span>Syed Owais Ali Shah</span>
+<div class="chat-container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <!-- Logged-in User -->
+        <button class="logged-in-user" onclick="toggleDropdown('userDropdown')">
+            <img src="images/download(1).png" alt="Logged-in User">
+
+            <div id="userDropdown" class="dropdown-content">
+                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
-            <div class="user">
-                <img src="images/user1.jpg" alt="User">
-                <span>Saad Athar Ali</span>
+
+            <div class="logo-area">
+                <img src="images/logo-trans.png" alt="Logo">
             </div>
-            <div class="user">
-                <img src="images/user2.jpg" alt="User">
-                <span>Abdul Samad</span>
-            </div>
-            <div class="user">
-              <img src="images/user2.jpg" alt="User">
-              <span>Hasnain</span>
-          </div>
-          <div class="user">
-            <img src="images/user2.jpg" alt="User">
-            <span>Zayd Haider</span>
-        </div>
-        <div class="user">
-          <img src="images/user2.jpg" alt="User">
-          <span>Meesum Khan</span>
-      </div>
-      <div class="user">
-        <img src="images/user2.jpg" alt="User">
-        <span>Yousuf Ali</span>
-    </div>
-    <div class="user">
-      <img src="images/user2.jpg" alt="User">
-      <span>Muhammad Ahraz</span>
-    </div>
-        </div>
-    
-        <!-- Chat Window -->
-        <div class="chat-window">
-            <div class="chat-header">
-                <img src="images/user2.jpg" alt="User">
-                <div>
-                    <h5>Syed Owais</h5>
-                    <span>Online</span>
-                </div>
-            </div>
-            <div class="chat-body">
-              <div class="message received">
-                  Lorem ipsum is typically a corrupted version of De finibus bonorum et malorum, a 1st-century BC text by Cicero.
-                  <div class="label">Message received</div>
-                  <div class="encrypted">\xb7\xcb\xc8\x03*\xaa\xb0</div>
-              </div>
-              <div class="message received">
-                  Lorem ipsum is typically a corrupted version of De finibus bonorum et malorum.
-                  <div class="label">Message received</div>
-                  <div class="encrypted">\xb7\xcb\xc8\x03*\xaa\xb0</div>
-              </div>
-              <div class="message sent">
-                  Lorem ipsum is typically a corrupted version of De finibus bonorum et malorum.
-                  <div class="label">Message sent</div>
-                  <div class="encrypted">\xb7\xcb\xc8\x03*\xaa\xb0</div>
-              </div>
-          </div>
-          
-            <div class="chat-footer">
-              <button class="btn btn-success"><i class="fas fa-paper-plane"></i></button>
-              <input type="text" placeholder="Type your message here">
-          </div>
-          
+        </button>
+
+        <!-- Users List -->
+        <br><br>
+        <div id="usersList" class="users-list">
+            <!-- Users will be loaded here dynamically by loadUsers() -->
         </div>
     </div>
+
+    <!-- Chat Window -->
+    <div class="chat-window" style="background-image: url('images/logo-trans.png'); background-repeat: no-repeat; background-position: center;">
+
+        <!-- Chat Target Header -->
+        <div class="chat-target-header">
+            <div >
+                <h5 id="chatName"></h5>
+                <span id="chatStatus"></span>
+            </div>
+        </div>
+
+        <!-- Chat Body -->
+        <div class="chat-body" id="chatMessages">
+            <!-- Chat messages will be loaded dynamically here -->
+        </div>
+
+        <!-- Chat Footer -->
+        <div class="chat-footer">
+            <button class="btn btn-success"><i class="fas fa-paper-plane"></i></button>
+            <input type="text" placeholder="Type your message here">
+        </div>
+    </div>
+</div>
 
 <!-- Footer -->
 <div class="footer">
     Quantum-Safe by ML-KEM
 </div>
 
-</body>
 <script src="js/main.js"></script>
+</body>
 </html>
