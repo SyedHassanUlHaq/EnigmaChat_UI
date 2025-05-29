@@ -190,3 +190,18 @@ footer {
     margin-top: 5px;
     display: none;
 }
+
+.encrypted-content {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 4px;
+    word-break: break-all;
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.message.sent .encrypted-content {
+    background-color: rgba(255, 255, 255, 0.1);
+}

@@ -5,6 +5,7 @@ from frontend.database import Database
 import base64 
 from cryptography.fernet import Fernet
 import hashlib
+from datetime import datetime
 
 # The provided encryption key
 ENCRYPTION_KEY = "616E0B753A3B7F40FEF9A389F58F16BFBB04622941D2464BDAE767820DFAC38E"
@@ -20,6 +21,13 @@ class Exposed:
         query = "SELECT * FROM users WHERE email = %s AND password = %s"
         result = self.db.execute_query(query, (username, password))
         if result:
+            # Update last login and online status
+            update_query = """
+            UPDATE users 
+            SET last_login = CURRENT_TIMESTAMP, is_online = TRUE 
+            WHERE email = %s
+            """
+            self.db.execute_update(update_query, (username,))
             logging.info(f"User {username} authenticated successfully.")
             return {"status": "success", "message": "Login successful"}
         else:
@@ -52,7 +60,10 @@ class Exposed:
 
     def get_all_users(self):
         try:
-            query = "SELECT * FROM public.users"
+            query = """
+            SELECT id, fullname, email, profile_picture, is_online, last_login 
+            FROM public.users
+            """
             users = self.db.execute_query(query)
             user_list = []
             for user in users:
@@ -60,12 +71,87 @@ class Exposed:
                     "id": user[0],
                     "fullname": user[1],
                     "email": user[2],
-                    "profile_picture_url": f"/static/profile_pictures/{user[3]}"
+                    "profile_picture_url": f"/static/profile_pictures/{user[3]}" if user[3] else None,
+                    "is_online": user[4],
+                    "last_login": user[5].isoformat() if user[5] else None
                 }
                 user_list.append(user_dict)
             return {"status": "success", "users": user_list}
         except Exception as e:
             logging.error(f"Error fetching users: {e}")
+            return {"status": "error", "message": str(e)}
+
+    def send_message(self, receiver_id: int, encrypted_content: str) -> dict:
+        """
+        Send an encrypted message to another user.
+
+        Args:
+            receiver_id (int): The ID of the user to send the message to.
+            encrypted_content (str): The encrypted message content.
+
+        Returns:
+            dict: Status of the operation.
+        """
+        try:
+            # Get the current user's ID from the session (you'll need to implement session management)
+            # For now, we'll use a hardcoded sender ID for testing
+            sender_id = 1  # TODO: Get this from the session
+
+            query = """
+            INSERT INTO messages (sender_id, receiver_id, encrypted_content)
+            VALUES (%s, %s, %s)
+            """
+            result = self.db.execute_update(query, (sender_id, receiver_id, encrypted_content))
+            
+            if result:
+                return {"status": "success", "message": "Message sent successfully"}
+            else:
+                return {"status": "error", "message": "Failed to send message"}
+        except Exception as e:
+            logging.error(f"Error sending message: {e}")
+            return {"status": "error", "message": str(e)}
+
+    def get_messages(self, other_user_id: int) -> dict:
+        """
+        Get messages between the current user and another user.
+
+        Args:
+            other_user_id (int): The ID of the other user in the conversation.
+
+        Returns:
+            dict: List of messages and their status.
+        """
+        try:
+            # Get the current user's ID from the session (you'll need to implement session management)
+            # For now, we'll use a hardcoded current user ID for testing
+            current_user_id = 1  # TODO: Get this from the session
+
+            query = """
+            SELECT id, sender_id, receiver_id, encrypted_content, created_at
+            FROM messages
+            WHERE (sender_id = %s AND receiver_id = %s)
+               OR (sender_id = %s AND receiver_id = %s)
+            ORDER BY created_at ASC
+            """
+            messages = self.db.execute_query(query, (current_user_id, other_user_id, other_user_id, current_user_id))
+            
+            message_list = []
+            for msg in messages:
+                # Decrypt the message content
+                decrypted_content = self.decrypt_message(msg[3])
+                
+                message_dict = {
+                    "id": msg[0],
+                    "content": decrypted_content,
+                    "encrypted_content": msg[3],
+                    "is_sender": msg[1] == current_user_id,
+                    "created_at": msg[4].isoformat()
+                }
+                message_list.append(message_dict)
+
+            return {"status": "success", "messages": message_list}
+        except Exception as e:
+            logging.error(f"Error fetching messages: {e}")
             return {"status": "error", "message": str(e)}
     
     def encrypt_message(self, message: str) -> str:

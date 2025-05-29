@@ -1,5 +1,4 @@
 let currentRecipientId = null;
-let currentSharedSecret = null; // 🔐 Save shared secret globally
 
 function toggleDropdown(id) {
     const dropdown = document.getElementById(id);
@@ -9,29 +8,52 @@ function toggleDropdown(id) {
 function openChat(userElement) {
     const userId = userElement.getAttribute('data-user-id');
     const userName = userElement.getAttribute('data-user-name');
-    // const userAvatar = userElement.getAttribute('data-user-avatar');
-    const userEk = userElement.getAttribute('data-user-ek');
 
     currentRecipientId = userId;
-
     document.querySelector('#chatName').textContent = userName;
-    // document.querySelector('#chatAvatar').src = userAvatar;
 
     const chatBody = document.querySelector('#chatMessages');
     chatBody.innerHTML = '';
 
-    pywebview.api.create_shared_secret(userEk)
-        .then(([k, c]) => {
-            currentSharedSecret = k; // ✅ Store shared secret
-            console.log("Shared secret established:", k, c);
-            const infoDiv = document.createElement('div');
-            infoDiv.classList.add('message', 'system');
-            infoDiv.textContent = `Shared secret established.`;
-            chatBody.appendChild(infoDiv);
-        })
-        .catch(error => {
-            console.error("Failed to create shared secret:", error);
-        });
+    // Load previous messages
+    loadMessages(userId);
+}
+
+async function loadMessages(userId) {
+    try {
+        const response = await pywebview.api.get_messages(userId);
+        if (response.status === 'success') {
+            const chatBody = document.querySelector('#chatMessages');
+            chatBody.innerHTML = '';
+
+            response.messages.forEach(message => {
+                const msgDiv = document.createElement('div');
+                msgDiv.classList.add('message', message.is_sender ? 'sent' : 'received');
+
+                const messageContent = document.createElement('div');
+                messageContent.textContent = message.content;
+                msgDiv.appendChild(messageContent);
+
+                // Add encrypted message display
+                const encryptedContent = document.createElement('div');
+                encryptedContent.classList.add('encrypted-content');
+                encryptedContent.textContent = `Encrypted: ${message.encrypted_content}`;
+                msgDiv.appendChild(encryptedContent);
+
+                const timeDiv = document.createElement('div');
+                timeDiv.classList.add('message-time');
+                timeDiv.textContent = new Date(message.created_at).toLocaleTimeString();
+                msgDiv.appendChild(timeDiv);
+
+                chatBody.appendChild(msgDiv);
+            });
+
+            // Scroll to bottom
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
 }
 
 function loadUsers() {
@@ -44,15 +66,12 @@ function loadUsers() {
             const userElement = document.createElement('div');
             userElement.classList.add('user');
 
-            const avatar = user.profile_picture_url.replace('/static/profile_pictures/', 'images/');
-
             userElement.setAttribute('data-user-id', user.id);
             userElement.setAttribute('data-user-name', user.fullname);
-            userElement.setAttribute('data-user-avatar', avatar);
-            userElement.setAttribute('data-user-ek', user.ek);
 
             userElement.innerHTML = `
                 <span>${user.fullname}</span>
+                <span class="status-indicator ${user.is_online ? 'online' : 'offline'}"></span>
             `;
 
             userElement.addEventListener('click', () => openChat(userElement));
@@ -73,7 +92,7 @@ window.onclick = function (event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#logoutLink').addEventListener('click', () => {
-        window.location.href = 'frontend/web/login.html';
+        window.location.href = 'login.html';
     });
 
     const sendBtn = document.querySelector('.chat-footer .btn-success');
@@ -81,39 +100,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     sendBtn.addEventListener('click', async () => {
         const messageText = inputField.value.trim();
-        if (!messageText || !currentRecipientId || !currentSharedSecret) return;
+        if (!messageText || !currentRecipientId) return;
 
         try {
-            const encrypted = await pywebview.api.encrypt_message(currentSharedSecret, messageText);
+            // Encrypt the message
+            const encrypted = await pywebview.api.encrypt_message(messageText);
+            
+            // Send the encrypted message
+            const response = await pywebview.api.send_message(currentRecipientId, encrypted);
+            
+            if (response.status === 'success') {
+                // Add message to chat
+                const msgDiv = document.createElement('div');
+                msgDiv.classList.add('message', 'sent');
 
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', 'sent');
+                const messageContent = document.createElement('div');
+                messageContent.textContent = messageText;
+                msgDiv.appendChild(messageContent);
 
-            const plaintextDiv = document.createElement('div');
-            plaintextDiv.textContent = messageText;
+                // Add encrypted message display
+                const encryptedContent = document.createElement('div');
+                encryptedContent.classList.add('encrypted-content');
+                encryptedContent.textContent = `Encrypted: ${encrypted}`;
+                msgDiv.appendChild(encryptedContent);
 
-            const encryptedDiv = document.createElement('div');
-            encryptedDiv.textContent = encrypted;
-            encryptedDiv.style.fontSize = '0.75em';
-            encryptedDiv.style.color = '#888';
+                const timeDiv = document.createElement('div');
+                timeDiv.classList.add('message-time');
+                timeDiv.textContent = new Date().toLocaleTimeString();
+                msgDiv.appendChild(timeDiv);
 
-            msgDiv.appendChild(plaintextDiv);
-            msgDiv.appendChild(encryptedDiv);
+                document.querySelector('#chatMessages').appendChild(msgDiv);
+                inputField.value = '';
 
-            document.querySelector('#chatMessages').appendChild(msgDiv);
-            inputField.value = '';
-
-            // Optional: send encrypted message to backend
-            // await pywebview.api.send_encrypted_message(currentRecipientId, encrypted);
-
+                // Scroll to bottom
+                const chatBody = document.querySelector('#chatMessages');
+                chatBody.scrollTop = chatBody.scrollHeight;
+            } else {
+                console.error('Failed to send message:', response.message);
+            }
         } catch (error) {
-            console.error("Encryption failed:", error);
+            console.error("Error sending message:", error);
         }
     });
 
     inputField.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') sendBtn.click();
     });
+
+    // Set up periodic message checking
+    setInterval(() => {
+        if (currentRecipientId) {
+            loadMessages(currentRecipientId);
+        }
+    }, 5000); // Check for new messages every 5 seconds
 
     if (window.pywebview) {
         loadUsers();
