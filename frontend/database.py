@@ -6,10 +6,10 @@ class Database:
     def __init__(self):
         try:
             self.connection = psycopg2.connect(
-                dbname="enigma_db",
-                user="enigma_user",
-                password="has27san",
-                host="localhost",  # Or your DB host
+                dbname="enigma_ui",
+                user="postgres",
+                password="TyVL3RPAI3Bk897Qw69n",
+                host="enigmachat.cfwuie0s2hc8.eu-north-1.rds.amazonaws.com",
                 port="5432"
             )
             self.connection.autocommit = True  # Optional: good for small apps
