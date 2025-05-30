@@ -201,31 +201,40 @@ footer {
     float: right;
     background-color: #dcf8c6;
     border-radius: 10px 0 10px 10px;
+    margin-left: auto;
 }
 
 .message.received {
     float: left;
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 0 10px 10px 10px;
+    margin-right: auto;
+}
+
+.message-content {
+    padding: 8px 12px;
+    word-wrap: break-word;
 }
 
 .sender-info {
     font-size: 0.8em;
     color: #666;
     margin-bottom: 2px;
-    font-weight: bold;
-}
-
-.message-content {
-    word-wrap: break-word;
-    margin: 5px 0;
+    padding: 0 12px;
 }
 
 .message-time {
     font-size: 0.7em;
     color: #999;
     text-align: right;
-    margin-top: 2px;
+    padding: 2px 12px 8px;
+}
+
+.encrypted-content {
+    font-size: 0.7em;
+    color: #999;
+    padding: 0 12px 4px;
+    font-style: italic;
 }
 
 #chatMessages {

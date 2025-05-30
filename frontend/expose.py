@@ -10,6 +10,9 @@ from datetime import datetime
 # The provided encryption key
 ENCRYPTION_KEY = "616E0B753A3B7F40FEF9A389F58F16BFBB04622941D2464BDAE767820DFAC38E"
 
+# Simple in-memory session store
+current_user_email = None
+
 class Exposed:
     def __init__(self):
         self.db = Database()
@@ -23,13 +26,15 @@ class Exposed:
             password_hash = hashlib.sha256(password.encode()).hexdigest()
 
             query = "SELECT * FROM users WHERE email = %s AND password_hash = %s"
-            print(query)
             print(f"Executing query with email: {email} and password_hash: {password_hash}")
             result = self.db.execute_query(query, (email, password_hash))
-            
-            print(result)
-            
+
             if result:
+                # Store the user's email in memory
+                global current_user_email
+                current_user_email = email
+                print(f"Stored current user email: {current_user_email}")
+                
                 logging.info(f"User {email} authenticated successfully.")
                 return {"status": "success", "message": "Login successful"}
             else:
@@ -283,9 +288,12 @@ class Exposed:
     def get_current_user(self):
         """Get the current user's information"""
         try:
-            # For now, we'll use a hardcoded user ID for testing
-            # TODO: Implement proper session management
-            current_user_id = 1  # This should come from the session
+            global current_user_email
+            print(f"Getting current user for email: {current_user_email}")
+            
+            if not current_user_email:
+                print("No current user email found")
+                return None
 
             conn = None
             try:
@@ -294,11 +302,12 @@ class Exposed:
                     cur.execute("""
                         SELECT id, fullname, email, profile_picture, created_at
                         FROM users
-                        WHERE id = %s
-                    """, (current_user_id,))
+                        WHERE email = %s
+                    """, (current_user_email,))
 
                     user = cur.fetchone()
                     if user:
+                        print(f"Found user: {user}")
                         return {
                             "id": user[0],
                             "fullname": user[1],
@@ -306,6 +315,7 @@ class Exposed:
                             "profile_picture": user[3],
                             "created_at": user[4].isoformat() if user[4] else None
                         }
+                    print("No user found in database")
                     return None
             finally:
                 if conn:

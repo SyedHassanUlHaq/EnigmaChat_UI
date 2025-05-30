@@ -185,6 +185,15 @@ font-style: italic;
 margin-top: 3px;
 }
 
+.message .encrypted-content {
+    font-size: 9px;
+    color: #66FF99; /* Green shade for encrypted text */
+    font-style: italic;
+    margin-top: 3px;
+    word-break: break-all; /* Ensures long encrypted strings wrap properly */
+    opacity: 0.7; /* Makes it slightly transparent */
+}
+
 .chat-footer {
 display: flex;
 align-items: center;

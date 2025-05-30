@@ -21,7 +21,6 @@ function openChat(userElement) {
 
 async function loadMessages(userId) {
     try {
-        // Get current user ID from the session or user data
         const currentUser = await pywebview.api.get_current_user();
         if (!currentUser || !currentUser.id) {
             console.error('No current user found');
@@ -37,18 +36,12 @@ async function loadMessages(userId) {
                 const msgDiv = document.createElement('div');
                 msgDiv.classList.add('message', message.is_sender ? 'sent' : 'received');
 
-                // Add sender info
-                const senderInfo = document.createElement('div');
-                senderInfo.classList.add('sender-info');
-                senderInfo.textContent = message.is_sender ? 'You' : document.querySelector('#chatName').textContent;
-                msgDiv.appendChild(senderInfo);
-
                 const messageContent = document.createElement('div');
                 messageContent.classList.add('message-content');
                 messageContent.textContent = message.content;
                 msgDiv.appendChild(messageContent);
 
-                // Add encrypted message display
+                // Add encrypted content display
                 const encryptedContent = document.createElement('div');
                 encryptedContent.classList.add('encrypted-content');
                 encryptedContent.textContent = `Encrypted: ${message.encrypted_content}`;
@@ -56,7 +49,15 @@ async function loadMessages(userId) {
 
                 const timeDiv = document.createElement('div');
                 timeDiv.classList.add('message-time');
-                timeDiv.textContent = new Date(message.created_at).toLocaleTimeString();
+                // Convert to Pakistan time (UTC+5)
+                const date = new Date(message.created_at);
+                const pakistanTime = new Date(date.getTime() + (5 * 60 * 60 * 1000)); // Add 5 hours
+                timeDiv.textContent = pakistanTime.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true,
+                    timeZone: 'Asia/Karachi'
+                });
                 msgDiv.appendChild(timeDiv);
 
                 chatBody.appendChild(msgDiv);
@@ -106,6 +107,7 @@ window.onclick = function (event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#logoutLink').addEventListener('click', () => {
+        localStorage.removeItem('currentUserEmail');
         window.location.href = 'login.html';
     });
 
@@ -202,6 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await pywebview.api.authenticate_user(email, password);
             if (response.status === 'success') {
+                setCurrentUserEmail(email);
+                
                 document.querySelector('#loginForm').style.display = 'none';
                 document.querySelector('#chatContainer').style.display = 'flex';
                 loadUsers();
@@ -257,5 +261,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // TODO: Implement profile picture upload
         // For now, return a default path
         return 'default_profile.jpg';
+    }
+
+    function setCurrentUserEmail(email) {
+        localStorage.setItem('currentUserEmail', email);
+    }
+
+    function getCurrentUserEmail() {
+        return localStorage.getItem('currentUserEmail');
     }
 });
