@@ -131,11 +131,12 @@ class Exposed:
                 with conn.cursor() as cur:
                     # Get messages where user is either sender or recipient
                     cur.execute("""
-                        SELECT id, sender_id, recipient_id, content, created_at
-                        FROM messages
-                        WHERE (sender_id = %s AND recipient_id = %s)
-                           OR (sender_id = %s AND recipient_id = %s)
-                        ORDER BY created_at ASC
+                        SELECT m.id, m.sender_id, m.recipient_id, m.content, m.created_at, u.fullname
+                        FROM messages m
+                        JOIN users u ON m.sender_id = u.id
+                        WHERE (m.sender_id = %s AND m.recipient_id = %s)
+                           OR (m.sender_id = %s AND m.recipient_id = %s)
+                        ORDER BY m.created_at ASC
                     """, (user_id, contact_id, contact_id, user_id))
 
                     messages = []
@@ -148,6 +149,7 @@ class Exposed:
                             "content": decrypted_content,
                             "encrypted_content": msg[3],
                             "is_sender": msg[1] == user_id,
+                            "sender_name": msg[5],
                             "created_at": msg[4].isoformat()
                         }
                         messages.append(message_dict)
