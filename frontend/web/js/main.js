@@ -21,7 +21,14 @@ function openChat(userElement) {
 
 async function loadMessages(userId) {
     try {
-        const response = await pywebview.api.get_messages(userId);
+        // Get current user ID from the session or user data
+        const currentUser = await pywebview.api.get_current_user();
+        if (!currentUser || !currentUser.id) {
+            console.error('No current user found');
+            return;
+        }
+
+        const response = await pywebview.api.get_messages(currentUser.id, userId);
         if (response.status === 'success') {
             const chatBody = document.querySelector('#chatMessages');
             chatBody.innerHTML = '';
@@ -30,7 +37,14 @@ async function loadMessages(userId) {
                 const msgDiv = document.createElement('div');
                 msgDiv.classList.add('message', message.is_sender ? 'sent' : 'received');
 
+                // Add sender info
+                const senderInfo = document.createElement('div');
+                senderInfo.classList.add('sender-info');
+                senderInfo.textContent = message.is_sender ? 'You' : document.querySelector('#chatName').textContent;
+                msgDiv.appendChild(senderInfo);
+
                 const messageContent = document.createElement('div');
+                messageContent.classList.add('message-content');
                 messageContent.textContent = message.content;
                 msgDiv.appendChild(messageContent);
 
@@ -103,25 +117,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!messageText || !currentRecipientId) return;
 
         try {
-            // Encrypt the message
-            const encrypted = await pywebview.api.encrypt_message(messageText);
-            
-            // Send the encrypted message
-            const response = await pywebview.api.send_message(currentRecipientId, encrypted);
+            // Get current user ID
+            const currentUser = await pywebview.api.get_current_user();
+            if (!currentUser || !currentUser.id) {
+                console.error('No current user found');
+                return;
+            }
+
+            // Send the message
+            const response = await pywebview.api.send_message(currentUser.id, currentRecipientId, messageText);
             
             if (response.status === 'success') {
                 // Add message to chat
                 const msgDiv = document.createElement('div');
                 msgDiv.classList.add('message', 'sent');
 
+                // Add sender info
+                const senderInfo = document.createElement('div');
+                senderInfo.classList.add('sender-info');
+                senderInfo.textContent = 'You';
+                msgDiv.appendChild(senderInfo);
+
                 const messageContent = document.createElement('div');
+                messageContent.classList.add('message-content');
                 messageContent.textContent = messageText;
                 msgDiv.appendChild(messageContent);
 
                 // Add encrypted message display
                 const encryptedContent = document.createElement('div');
                 encryptedContent.classList.add('encrypted-content');
-                encryptedContent.textContent = `Encrypted: ${encrypted}`;
+                encryptedContent.textContent = `Encrypted: ${response.encrypted_content}`;
                 msgDiv.appendChild(encryptedContent);
 
                 const timeDiv = document.createElement('div');
@@ -160,5 +185,77 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('pywebviewready', () => {
             loadUsers();
         });
+    }
+
+    const loginBtn = document.querySelector('#loginBtn');
+    const registerBtn = document.querySelector('#registerBtn');
+
+    loginBtn.addEventListener('click', async () => {
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+
+        if (!email || !password) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        try {
+            const response = await pywebview.api.authenticate_user(email, password);
+            if (response.status === 'success') {
+                document.querySelector('#loginForm').style.display = 'none';
+                document.querySelector('#chatContainer').style.display = 'flex';
+                loadUsers();
+            } else {
+                alert(response.message || 'Login failed');
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            alert('Login failed');
+        }
+    });
+
+    registerBtn.addEventListener('click', async () => {
+        const fullname = document.querySelector('#fullname').value;
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+        const confirmPassword = document.querySelector('#confirm-password').value;
+        const profilePicture = document.querySelector('#profile-picture').files[0];
+
+        if (!fullname || !email || !password || !confirmPassword || !profilePicture) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+
+        try {
+            // Handle profile picture upload
+            const formData = new FormData();
+            formData.append('profile_picture', profilePicture);
+            
+            // Get the profile picture path
+            const profilePicturePath = await handleProfilePictureUpload(formData);
+            
+            const response = await pywebview.api.register_user(fullname, email, password, profilePicturePath);
+            if (response.status === 'success') {
+                alert('Registration successful! Please login.');
+                document.querySelector('#registerForm').style.display = 'none';
+                document.querySelector('#loginForm').style.display = 'block';
+            } else {
+                alert(response.message || 'Registration failed');
+            }
+        } catch (error) {
+            console.error("Registration error:", error);
+            alert('Registration failed');
+        }
+    });
+
+    async function handleProfilePictureUpload(formData) {
+        // TODO: Implement profile picture upload
+        // For now, return a default path
+        return 'default_profile.jpg';
     }
 });

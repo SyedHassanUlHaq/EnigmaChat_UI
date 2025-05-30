@@ -11,3 +11,4 @@ def bind_expose_methods(window):
     window.expose(expose.decrypt_message)
     window.expose(expose.send_message)
     window.expose(expose.get_messages)
+    window.expose(expose.get_current_user)

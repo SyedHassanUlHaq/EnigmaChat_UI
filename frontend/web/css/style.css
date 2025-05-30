@@ -191,17 +191,52 @@ footer {
     display: none;
 }
 
-.encrypted-content {
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 4px;
-    word-break: break-all;
-    font-family: monospace;
-    background-color: rgba(0, 0, 0, 0.05);
-    padding: 4px;
-    border-radius: 4px;
+.message {
+    margin: 10px;
+    max-width: 70%;
+    clear: both;
 }
 
-.message.sent .encrypted-content {
-    background-color: rgba(255, 255, 255, 0.1);
+.message.sent {
+    float: right;
+    background-color: #dcf8c6;
+    border-radius: 10px 0 10px 10px;
+}
+
+.message.received {
+    float: left;
+    background-color: #fff;
+    border-radius: 0 10px 10px 10px;
+}
+
+.sender-info {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 2px;
+    font-weight: bold;
+}
+
+.message-content {
+    word-wrap: break-word;
+    margin: 5px 0;
+}
+
+.message-time {
+    font-size: 0.7em;
+    color: #999;
+    text-align: right;
+    margin-top: 2px;
+}
+
+#chatMessages {
+    padding: 20px;
+    overflow-y: auto;
+    height: calc(100vh - 180px);
+    background-color: #e5ddd5;
+}
+
+#chatMessages::after {
+    content: '';
+    display: table;
+    clear: both;
 }

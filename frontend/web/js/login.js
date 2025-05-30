@@ -38,6 +38,7 @@ loginForm.addEventListener('submit', async (event) => {
 
     try {
         const result = await pywebview.api.authenticate_user(email, password);
+        console.log("result: ", result)
         if (result.status === 'success') {
             window.location.href = "main.html";
         } else {
