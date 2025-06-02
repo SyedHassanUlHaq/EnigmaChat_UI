@@ -3,10 +3,31 @@ from psycopg2 import sql
 from globals import host, database, user, password, port
 
 def setup_database_and_tables():
+    # First connect to postgres database to create our database
     try:
-        # Connect directly to the enigma_ui database
         connection = psycopg2.connect(
-            dbname="enigma_ui",
+            dbname="postgres",  # Connect to default postgres database
+            user=user,
+            password=password,
+            host=host,
+            port=port
+        )
+        connection.autocommit = True
+        cursor = connection.cursor()
+
+        # Create database if it doesn't exist
+        cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{database}'")
+        exists = cursor.fetchone()
+        if not exists:
+            cursor.execute(f'CREATE DATABASE {database}')
+            print(f"Database '{database}' created successfully.")
+        
+        cursor.close()
+        connection.close()
+
+        # Now connect to our database and create tables
+        connection = psycopg2.connect(
+            dbname=database,
             user=user,
             password=password,
             host=host,
@@ -21,11 +42,11 @@ def setup_database_and_tables():
                 id SERIAL PRIMARY KEY,
                 fullname VARCHAR(100) NOT NULL,
                 email VARCHAR(100) UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                profile_picture BYTEA,
+                password_hash VARCHAR(255) NOT NULL,
+                profile_picture VARCHAR(255),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                last_login TIMESTAMP,
-                is_online BOOLEAN DEFAULT FALSE
+                is_typing BOOLEAN DEFAULT FALSE,
+                last_typing TIMESTAMP
             )
         """)
         print("Table 'users' created successfully.")
@@ -35,11 +56,11 @@ def setup_database_and_tables():
             CREATE TABLE IF NOT EXISTS messages (
                 id SERIAL PRIMARY KEY,
                 sender_id INTEGER REFERENCES users(id) NOT NULL,
-                receiver_id INTEGER REFERENCES users(id) NOT NULL,
-                encrypted_content TEXT NOT NULL,
+                recipient_id INTEGER REFERENCES users(id) NOT NULL,
+                content TEXT NOT NULL,
+                status VARCHAR(20) DEFAULT 'sent',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                is_read BOOLEAN DEFAULT FALSE,
-                CONSTRAINT different_sender_receiver CHECK (sender_id != receiver_id)
+                CONSTRAINT different_sender_recipient CHECK (sender_id != recipient_id)
             )
         """)
         print("Table 'messages' created successfully.")
@@ -52,16 +73,17 @@ def setup_database_and_tables():
 
         # Create index on messages for faster retrieval
         cursor.execute("""
-            CREATE INDEX IF NOT EXISTS idx_messages_sender_receiver 
-            ON messages(sender_id, receiver_id)
+            CREATE INDEX IF NOT EXISTS idx_messages_sender_recipient 
+            ON messages(sender_id, recipient_id)
         """)
-        print("Index on messages(sender_id, receiver_id) created successfully.")
+        print("Index on messages(sender_id, recipient_id) created successfully.")
 
     except Exception as e:
-        print(f"Error while creating tables: {e}")
+        print(f"Error while creating database and tables: {e}")
     finally:
-        if connection:
+        if 'cursor' in locals():
             cursor.close()
+        if 'connection' in locals():
             connection.close()
 
 if __name__ == "__main__":

@@ -7,8 +7,9 @@ from cryptography.fernet import Fernet
 import hashlib
 from datetime import datetime
 
-# The provided encryption key
-ENCRYPTION_KEY = "616E0B753A3B7F40FEF9A389F58F16BFBB04622941D2464BDAE767820DFAC38E"
+# Read encryption key from file
+with open('out.txt', 'r') as f:
+    ENCRYPTION_KEY = f.read().strip()
 
 # Simple in-memory session store
 current_user_email = None
@@ -50,12 +51,16 @@ class Exposed:
             # Hash the password
             password_hash = hashlib.sha256(password.encode()).hexdigest()
 
+            # Read the public key from file
+            with open('key_output.txt', 'r') as f:
+                public_key = f.read().strip()
+
             # Insert into the database
             query = """
-            INSERT INTO users (fullname, email, password_hash, profile_picture)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO users (fullname, email, password_hash, profile_picture, public_key)
+            VALUES (%s, %s, %s, %s, %s)
             """
-            result = self.db.execute_update(query, (fullname, email, password_hash, profile_picture_path))
+            result = self.db.execute_update(query, (fullname, email, password_hash, profile_picture_path, public_key))
 
             if result:
                 logging.info(f"User {email} registered successfully.")
@@ -255,6 +260,7 @@ class Exposed:
                             email VARCHAR(100) UNIQUE NOT NULL,
                             password_hash VARCHAR(255) NOT NULL,
                             profile_picture VARCHAR(255),
+                            public_key TEXT NOT NULL,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                         )
                     """)
